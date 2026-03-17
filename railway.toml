@@ -1,9 +1,7 @@
 [build]
-# Устанавливает зависимости и собирает React-приложение
 buildCommand = "npm run build"
 
 [deploy]
-# Запускает Express-сервер который раздаёт и API, и фронтенд
 startCommand = "npm start"
 healthcheckPath = "/api/health"
 healthcheckTimeout = 30
