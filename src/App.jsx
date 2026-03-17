@@ -1,7 +1,12 @@
 import { useState, useMemo, useCallback } from "react";
-import { mockRecipes, currentUser, moodOptions } from "./data/mockData";
+import { mockRecipes, moodOptions } from "./data/mockData";
 import { usePortionCalc, formatAmount } from "./hooks/usePortions";
 import { useIngredientMatch } from "./hooks/useIngredientMatch";
+import { RegisterPage, LoginPage, ForgotPasswordPage, ResetPasswordPage, authCss } from "./AuthPages";
+import { ChatPage, chatCss } from "./ChatPage";
+import { AdminPage, adminCss } from "./AdminPage";
+import { PhotoUpload, photoUploadCss } from "./components/PhotoUpload";
+import { CaloriePanel, calorieCss } from "./components/CaloriePanel";
 
 // ─── ICONS ────────────────────────────────────────────────────────────────────
 const Icon = ({ d, size = 20, stroke = "currentColor", fill = "none" }) => (
@@ -374,6 +379,8 @@ const css = `
   .stat-num { font-family: var(--font-display); font-size: 24px; font-weight: 700; color: var(--terracotta); }
   .stat-label { font-size: 12px; color: var(--ink-60); }
 
+  .nav-btn.nav-btn-admin { color: var(--terracotta); font-weight: 600; }
+  .nav-btn.nav-btn-admin.active { background: var(--terracotta-light); }
   .success-toast {
     position: fixed; bottom: 24px; right: 24px;
     background: var(--sage); color: #fff; padding: 14px 22px; border-radius: var(--radius-sm);
@@ -382,6 +389,117 @@ const css = `
     animation: slideIn 0.3s ease;
   }
   @keyframes slideIn { from { transform: translateY(16px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+  /* ═══════════════════════════════════════════════════════
+     МОБИЛЬНАЯ АДАПТАЦИЯ
+     ═══════════════════════════════════════════════════════ */
+
+  /* Планшеты (до 768px) */
+  @media (max-width: 768px) {
+    .hero { padding: 32px 24px; margin-bottom: 28px; }
+    .hero h1 { font-size: 30px; }
+    .hero p { font-size: 15px; }
+
+    .recipe-grid { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px; }
+    .mood-grid { grid-template-columns: repeat(4, 1fr); gap: 10px; }
+
+    .stats-grid { grid-template-columns: repeat(2, 1fr); }
+
+    .profile-header { flex-direction: column; gap: 16px; }
+    .avatar-lg { width: 64px; height: 64px; font-size: 22px; }
+  }
+
+  /* Телефоны (до 480px) */
+  @media (max-width: 480px) {
+
+    /* Навбар — гамбургер-меню */
+    .nav { padding: 0 16px; height: 56px; position: relative; }
+    .nav-logo { font-size: 18px; }
+    .nav-links { display: none; }
+    .nav-links.open {
+      display: flex; flex-direction: column; align-items: stretch;
+      position: absolute; top: 56px; left: 0; right: 0;
+      background: var(--warm-white); border-bottom: 1px solid var(--ink-10);
+      padding: 12px 16px; gap: 6px; z-index: 200; box-shadow: var(--shadow-lg);
+    }
+    .nav-links.open .nav-btn { text-align: left; padding: 12px 16px; border-radius: var(--radius-sm); }
+    .nav-links.open .nav-btn-primary { text-align: center; padding: 12px; border-radius: var(--radius-sm); }
+    .nav-links.open .nav-btn:last-child { margin-top: 4px; border-top: 1px solid var(--ink-10); padding-top: 12px; }
+    .nav-hamburger {
+      display: flex; flex-direction: column; gap: 5px; cursor: pointer;
+      padding: 8px; margin-left: auto; background: none; border: none;
+    }
+    .nav-hamburger span {
+      display: block; width: 22px; height: 2px; background: var(--ink);
+      border-radius: 2px; transition: all 0.25s;
+    }
+    .nav-hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .nav-hamburger.open span:nth-child(2) { opacity: 0; }
+    .nav-hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+    /* Основной контент */
+    .main { padding: 20px 16px; }
+
+    /* Герой */
+    .hero { padding: 24px 20px; border-radius: 16px; margin-bottom: 24px; }
+    .hero h1 { font-size: 24px; }
+    .hero p { font-size: 14px; margin-bottom: 20px; }
+    .btn-white, .btn-outline-white { padding: 10px 18px; font-size: 14px; }
+
+    /* Поиск */
+    .search-bar { flex-wrap: wrap; gap: 8px; }
+    .filter-select { width: 100%; }
+
+    /* Рецепты */
+    .recipe-grid { grid-template-columns: 1fr; gap: 16px; }
+    .card-img { height: 180px; }
+
+    /* Настроение */
+    .mood-grid { grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 28px; }
+    .mood-chip { padding: 12px 8px; }
+    .mood-emoji { font-size: 22px; }
+    .mood-label { font-size: 11px; }
+
+    /* Страница рецепта */
+    .recipe-cover { height: 240px; border-radius: 12px; }
+    .recipe-title { font-size: 26px; }
+    .recipe-meta-row { gap: 10px; }
+    .meta-badge { font-size: 12px; padding: 5px 10px; }
+    .two-col { grid-template-columns: 1fr; gap: 28px; }
+
+    /* Калькулятор */
+    .calc-tabs { flex-direction: column; }
+    .servings-row { gap: 8px; }
+
+    /* Матчинг */
+    .match-card { flex-direction: column; }
+    .match-card-img { width: 100%; height: 160px; }
+    .match-card-img img { width: 100%; height: 100%; object-fit: cover; }
+    .mode-tabs { flex-wrap: wrap; }
+
+    /* Форма добавления рецепта */
+    .form-section { padding: 20px 16px; }
+    .form-row { grid-template-columns: 1fr; }
+    .ingredient-form-row { grid-template-columns: 1fr 1fr; gap: 8px; }
+    .ingredient-form-row .form-input:first-child { grid-column: 1 / -1; }
+
+    /* Профиль */
+    .profile-header { flex-direction: column; text-align: center; padding: 20px 16px; }
+    .profile-stats { justify-content: center; gap: 20px; }
+    .avatar-lg { margin: 0 auto; }
+
+    /* Тост */
+    .success-toast { left: 16px; right: 16px; bottom: 16px; font-size: 14px; padding: 12px 16px; }
+
+    /* Секция */
+    .section-title { font-size: 22px; }
+  }
+
+  /* Гамбургер скрыт на десктопе */
+  .nav-hamburger { display: none; }
+  @media (max-width: 480px) {
+    .nav-hamburger { display: flex; }
+  }
 `;
 
 // ─── STARS ───────────────────────────────────────────────────────────────────
@@ -562,6 +680,12 @@ function RecipePage({ recipeId, recipes, favorites, onFav, onBack, currentUserId
 
       <PortionCalc recipe={recipe} calc={calc} />
 
+      <CaloriePanel
+        ingredients={scaledIngredients}
+        servings={calc.servings}
+        baseServings={recipe.baseServings}
+      />
+
       <div className="two-col" style={{ marginBottom: 40 }}>
         <div>
           <h2 className="section-h2">Ингредиенты</h2>
@@ -643,7 +767,7 @@ function AddRecipePage({ onSave, onCancel }) {
       prepTime: +prepTime, cookTime: +cookTime, baseServings: +servings,
       rating: 5, ratingCount: 0,
       coverImage: coverImage || "https://images.unsplash.com/photo-1466637574441-749b8f19452f?w=600&q=80",
-      author: { id: currentUser.id, name: currentUser.name, avatar: currentUser.avatar },
+      author: { id: "u1", name: "Я", avatar: "Я" },
       tags: [], mood: [],
       ingredients: ingredients.filter(i => i.name).map((i, idx) => ({
         id: `i${idx}`, name: i.name, amount: parseFloat(i.amount) || 0, unit: i.unit
@@ -694,10 +818,7 @@ function AddRecipePage({ onSave, onCancel }) {
             <input className="form-input" type="number" min="0" value={cookTime} onChange={e => setCookTime(e.target.value)} />
           </div>
         </div>
-        <div className="form-group">
-          <label className="form-label">Ссылка на фото обложки</label>
-          <input className="form-input" placeholder="https://..." value={coverImage} onChange={e => setCoverImage(e.target.value)} />
-        </div>
+        <PhotoUpload value={coverImage} onChange={setCoverImage} />
       </div>
 
       <div className="form-section">
@@ -736,6 +857,15 @@ function AddRecipePage({ onSave, onCancel }) {
         ))}
         <button className="add-row-btn" onClick={addStep}><PlusIcon /> Добавить шаг</button>
       </div>
+
+      {/* Предпросмотр калорий */}
+      <CaloriePanel
+        ingredients={ingredients.filter(i => i.name && i.amount).map((i, idx) => ({
+          id: `i${idx}`, name: i.name, amount: parseFloat(i.amount) || 0, unit: i.unit
+        }))}
+        servings={+servings}
+        baseServings={+servings}
+      />
 
       <div className="form-submit-row">
         <button className="btn-secondary" onClick={onCancel}>Отмена</button>
@@ -861,19 +991,39 @@ function IngredientMatchPage({ recipes, onOpen }) {
 }
 
 // ─── PROFILE PAGE ─────────────────────────────────────────────────────────────
-function ProfilePage({ recipes, favorites, onOpen, onFav }) {
-  const myRecipes = recipes.filter(r => r.author.id === currentUser.id);
+function ProfilePage({ recipes, favorites, onOpen, onFav, currentUser, onLogin, onRegister }) {
+  const myRecipes  = currentUser ? recipes.filter(r => r.author?.id === currentUser.id) : [];
   const favRecipes = recipes.filter(r => favorites.includes(r.id));
   const [tab, setTab] = useState("my");
+
+  if (!currentUser) {
+    return (
+      <div style={{ textAlign: "center", padding: "80px 20px" }}>
+        <div style={{ fontSize: 64, marginBottom: 20 }}>👤</div>
+        <div style={{ fontFamily: "var(--font-display)", fontSize: 26, fontWeight: 600, marginBottom: 12 }}>
+          Войдите в аккаунт
+        </div>
+        <p style={{ color: "var(--ink-60)", marginBottom: 28, fontSize: 16 }}>
+          Чтобы добавлять рецепты, сохранять избранное и общаться в чате
+        </p>
+        <div style={{ display: "flex", gap: 12, justifyContent: "center" }}>
+          <button className="btn-primary-lg" onClick={onLogin}>Войти</button>
+          <button className="btn-secondary" onClick={onRegister}>Зарегистрироваться</button>
+        </div>
+      </div>
+    );
+  }
+
+  const avatarLetters = currentUser.username ? currentUser.username.slice(0,2).toUpperCase() : "?";
 
   return (
     <div>
       <div className="profile-header">
-        <div className="avatar-lg">{currentUser.avatar}</div>
+        <div className="avatar-lg">{avatarLetters}</div>
         <div style={{ flex: 1 }}>
-          <div className="profile-name">{currentUser.name}</div>
-          <div className="profile-handle">@{currentUser.username}</div>
-          <div className="profile-bio">{currentUser.bio}</div>
+          <div className="profile-name">{currentUser.username}</div>
+          <div className="profile-handle">{currentUser.email}</div>
+          {currentUser.bio && <div className="profile-bio">{currentUser.bio}</div>}
           <div className="profile-stats">
             <div className="stat-item">
               <div className="stat-num">{myRecipes.length}</div>
@@ -882,10 +1032,6 @@ function ProfilePage({ recipes, favorites, onOpen, onFav }) {
             <div className="stat-item">
               <div className="stat-num">{favRecipes.length}</div>
               <div className="stat-label">избранных</div>
-            </div>
-            <div className="stat-item">
-              <div className="stat-num">{myRecipes.reduce((s, r) => s + r.ratingCount, 0)}</div>
-              <div className="stat-label">оценок</div>
             </div>
           </div>
         </div>
@@ -1000,10 +1146,62 @@ function HomePage({ recipes, favorites, onOpen, onFav, onAddRecipe, onMatchPage 
 
 // ─── APP ROOT ─────────────────────────────────────────────────────────────────
 export default function App() {
-  const [page, setPage] = useState("home"); // home | recipe | add | match | profile
+  // ── Auth state ──────────────────────────────────────────────────────────────
+  const [authUser, setAuthUser] = useState(() => {
+    // Проверяем сохранённый токен при загрузке
+    const token = localStorage.getItem("access_token");
+    const saved  = localStorage.getItem("auth_user");
+    if (token && saved) { try { return JSON.parse(saved); } catch {} }
+    return null;
+  });
+
+  // Обрабатываем редирект после верификации email (?verified=true&access=...&refresh=...)
+  useState(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("verified") === "true") {
+      const access  = params.get("access");
+      const refresh = params.get("refresh");
+      if (access && refresh) {
+        localStorage.setItem("access_token",  access);
+        localStorage.setItem("refresh_token", refresh);
+        // Попытка достать user из токена (payload)
+        try {
+          const payload = JSON.parse(atob(access.split(".")[1]));
+          const u = { id: payload.id, username: payload.username, email: payload.email, role: payload.role || "user" };
+          setAuthUser(u);
+          localStorage.setItem("auth_user", JSON.stringify(u));
+        } catch {}
+      }
+      window.history.replaceState({}, "", "/");
+    }
+    // Обрабатываем reset-password token
+    const resetToken = params.get("token");
+    if (window.location.pathname === "/reset-password" && resetToken) {
+      setPage("reset");
+      setResetToken(resetToken);
+    }
+  });
+
+  const handleLogin = (user) => {
+    setAuthUser(user);
+    localStorage.setItem("auth_user", JSON.stringify(user));
+    setPage("home");
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem("access_token");
+    localStorage.removeItem("refresh_token");
+    localStorage.removeItem("auth_user");
+    setAuthUser(null);
+    setPage("home");
+  };
+
+  // ── Page state ──────────────────────────────────────────────────────────────
+  const [page, setPage] = useState("home");
+  const [resetToken, setResetToken] = useState("");
   const [openRecipeId, setOpenRecipeId] = useState(null);
   const [recipes, setRecipes] = useState(mockRecipes);
-  const [favorites, setFavorites] = useState(["2"]);
+  const [favorites, setFavorites] = useState([]);
   const [toast, setToast] = useState(null);
 
   const showToast = useCallback((msg) => {
@@ -1012,50 +1210,84 @@ export default function App() {
   }, []);
 
   const handleFav = useCallback((id) => {
+    if (!authUser) { showToast("Войдите чтобы добавить в избранное"); return; }
     setFavorites(prev => {
       const next = prev.includes(id) ? prev.filter(f => f !== id) : [...prev, id];
       showToast(prev.includes(id) ? "Удалено из избранного" : "Добавлено в избранное ❤️");
       return next;
     });
-  }, [showToast]);
+  }, [authUser, showToast]);
 
-  const handleOpen = (id) => { setOpenRecipeId(id); setPage("recipe"); };
-  const handleBack = () => { setPage("home"); setOpenRecipeId(null); };
+  const handleOpen   = (id) => { setOpenRecipeId(id); setPage("recipe"); };
+  const handleBack   = ()   => { setPage("home"); setOpenRecipeId(null); };
   const handleSaveRecipe = (recipe) => { setRecipes(prev => [recipe, ...prev]); setPage("home"); showToast("Рецепт опубликован! 🎉"); };
   const handleDelete = (id) => { setRecipes(prev => prev.filter(r => r.id !== id)); setPage("home"); showToast("Рецепт удалён"); };
 
+  const isAdmin = authUser?.role === "admin";
+  const [menuOpen, setMenuOpen] = useState(false);
+  const closeMenu = () => setMenuOpen(false);
+
+  // Страницы авторизации — без навбара
+  if (page === "login")    return <LoginPage    onSuccess={handleLogin} onRegister={() => setPage("register")} onForgot={() => setPage("forgot")} />;
+  if (page === "register") return <RegisterPage onLogin={() => setPage("login")} />;
+  if (page === "forgot")   return <ForgotPasswordPage onBack={() => setPage("login")} />;
+  if (page === "reset")    return <ResetPasswordPage token={resetToken} onSuccess={() => setPage("login")} />;
+
   const nav = [
-    ["home", "Рецепты"],
-    ["match", "Что готовить?"],
-    ["profile", "Мой профиль"],
+    ["home",    "Рецепты"],
+    ["match",   "Что готовить?"],
+    ...(authUser ? [["chat", "Чат"]] : []),
+    ["profile", "Профиль"],
+    ...(isAdmin ? [["admin", "Admin"]] : []),
   ];
 
   return (
     <>
-      <style>{css}</style>
+      <style>{css}{authCss}{chatCss}{adminCss}{photoUploadCss}{calorieCss}</style>
       <div className="app">
         <nav className="nav">
-          <span className="nav-logo" onClick={() => setPage("home")}>
+          <span className="nav-logo" onClick={() => { setPage("home"); closeMenu(); }}>
             Рецепт<span>бук</span>
           </span>
-          <div className="nav-links">
+
+          {/* Гамбургер — только на мобильных */}
+          <button className={`nav-hamburger ${menuOpen ? "open" : ""}`} onClick={() => setMenuOpen(o => !o)} aria-label="Меню">
+            <span /><span /><span />
+          </button>
+
+          <div className={`nav-links ${menuOpen ? "open" : ""}`}>
             {nav.map(([id, label]) => (
-              <button key={id} className={`nav-btn ${page === id ? "active" : ""}`} onClick={() => { setPage(id); setOpenRecipeId(null); }}>
+              <button key={id}
+                className={`nav-btn ${page === id ? "active" : ""}${id === "admin" ? " nav-btn-admin" : ""}`}
+                onClick={() => { setPage(id); setOpenRecipeId(null); closeMenu(); }}>
                 {label}
               </button>
             ))}
-            <button className="nav-btn-primary" onClick={() => setPage("add")}>
-              <PlusIcon size={16} /> Добавить
-            </button>
+            {authUser ? (
+              <>
+                <button className="nav-btn-primary" onClick={() => { setPage("add"); closeMenu(); }}>
+                  <PlusIcon size={16} /> Добавить
+                </button>
+                <button className="nav-btn" onClick={() => { handleLogout(); closeMenu(); }} style={{ color: "var(--ink-60)" }}>
+                  Выйти
+                </button>
+              </>
+            ) : (
+              <button className="nav-btn-primary" onClick={() => { setPage("login"); closeMenu(); }}>
+                Войти
+              </button>
+            )}
           </div>
         </nav>
 
         <main className="main">
-          {page === "home" && <HomePage recipes={recipes} favorites={favorites} onOpen={handleOpen} onFav={handleFav} onAddRecipe={() => setPage("add")} onMatchPage={() => setPage("match")} />}
-          {page === "recipe" && openRecipeId && <RecipePage recipeId={openRecipeId} recipes={recipes} favorites={favorites} onFav={handleFav} onBack={handleBack} currentUserId={currentUser.id} onDelete={handleDelete} />}
-          {page === "add" && <AddRecipePage onSave={handleSaveRecipe} onCancel={() => setPage("home")} />}
-          {page === "match" && <IngredientMatchPage recipes={recipes} onOpen={handleOpen} />}
-          {page === "profile" && <ProfilePage recipes={recipes} favorites={favorites} onOpen={handleOpen} onFav={handleFav} />}
+          {page === "home"    && <HomePage recipes={recipes} favorites={favorites} onOpen={handleOpen} onFav={handleFav} onAddRecipe={() => authUser ? setPage("add") : setPage("login")} onMatchPage={() => setPage("match")} />}
+          {page === "recipe"  && openRecipeId && <RecipePage recipeId={openRecipeId} recipes={recipes} favorites={favorites} onFav={handleFav} onBack={handleBack} currentUserId={authUser?.id} onDelete={handleDelete} />}
+          {page === "add"     && (authUser ? <AddRecipePage onSave={handleSaveRecipe} onCancel={() => setPage("home")} /> : <LoginPage onSuccess={handleLogin} onRegister={() => setPage("register")} onForgot={() => setPage("forgot")} />)}
+          {page === "match"   && <IngredientMatchPage recipes={recipes} onOpen={handleOpen} />}
+          {page === "profile" && <ProfilePage recipes={recipes} favorites={favorites} onOpen={handleOpen} onFav={handleFav} currentUser={authUser} onLogin={() => setPage("login")} onRegister={() => setPage("register")} />}
+          {page === "chat"    && (authUser ? <ChatPage currentUser={authUser} /> : <LoginPage onSuccess={handleLogin} onRegister={() => setPage("register")} onForgot={() => setPage("forgot")} />)}
+          {page === "admin"   && isAdmin && <AdminPage currentUser={authUser} />}
         </main>
 
         {toast && (
