@@ -4,19 +4,17 @@ const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
   max: 20,
   idleTimeoutMillis: 30_000,
-  connectionTimeoutMillis: 2_000,
-  ssl: process.env.NODE_ENV === "production" ? { rejectUnauthorized: false } : false,
+  connectionTimeoutMillis: 5_000,
+  ssl: { rejectUnauthorized: false },
 });
 
 pool.on("error", (err) => {
-  console.error("Unexpected PG pool error:", err);
+  console.error("PG pool error:", err.message);
 });
 
-// Удобная обёртка: db.query(sql, params)
 const db = {
   query: (text, params) => pool.query(text, params),
   getClient: () => pool.connect(),
-  // Транзакция
   async transaction(fn) {
     const client = await pool.connect();
     try {
